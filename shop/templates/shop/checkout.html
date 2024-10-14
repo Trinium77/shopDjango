@@ -1,0 +1,101 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <ul class="list-group" id="item-list">
+            <h3 class="text-center ">Voici votre liste</h3>
+           
+           
+        </ul>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="items", name="items">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputEmail4">Nom</label>
+                <input type="text" id="nom" name="nom" class="form-control" id="inputEmail4" placeholder="Donald">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPassword4">Email</label>
+                <input type="email" id="email" name="email" class="form-control" id="inputPassword4" placeholder="donaldtedom@gmail.com">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="inputAddress">Address</label>
+              <input type="text" id="address" name="address" class="form-control" id="inputAddress" placeholder="1234 Main St">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputCity">Ville</label>
+                <input type="text" name="ville" id="ville" class="form-control" id="inputCity">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="inputState">Pays</label>
+                <select id="pays" name="pays" class="form-control">
+                  <option selected>BURKINA FASO</option>
+                  <option>Cote d'Ivoir</option>
+                  <option>Tchad</option>
+                  <option>France</option>
+                  <option>Cameroun</option>
+                </select>
+              </div>
+              <div class="form-group col-md-2">
+                <label for="inputZip">Zip</label>
+                <input name="zipcode" id="zipcode" type="text" class="form-control">
+              </div>
+            </div>
+            <div class="form-group col-md-2">
+              <label for="inputZip">Somme total a payer </label>
+              <input name="total" id="total" type="readonly" class=" bg-dark text-warning form-control" >
+            </div>
+          </div>
+            <div class="form-group">
+             
+            <button type="submit" class="btn btn-primary">Commander</button>
+          </form>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        if(localStorage.getItem('panier')==null){
+            var panier =  {};
+
+        }else{
+            panier = JSON.parse(localStorage.getItem('panier'));
+        }
+        var total = 0;
+        var nombre = 0;
+        for(item in panier){
+            let nom = panier[item][1];
+            let quantite = panier[item][0];
+            let prix = panier[item][2];
+            nombre += quantite;
+            total += prix;
+            let itemString = ` <li class="list-group-item d-flex justify-content-between align-items-center">
+              ${nom}
+              <span class="badge badge-primary badge-pill"> QTE: ${quantite}</span>
+              <span class="badge badge-warning badge-pill">$ ${prix}</span>
+            </li>`;
+            $('#item-list').append(itemString);
+        }
+        let itemNombre = ` <li class="list-group-item d-flex justify-content-between align-items-center">
+              <b class="bg-danger ">PRIX ET QUANTITE TOTAL</b>
+              <span class="badge badge-danger badge-pill"> TQTE: ${nombre}</span>
+              <span class="badge badge-danger badge-pill">$ ${total}</span>
+            </li>`;
+            $('#item-list').append(itemNombre);
+            $('#total').val("$"+total);
+
+
+        $('#items').val(JSON.stringify(panier));
+       
+
+    </script>
+{% endblock %}

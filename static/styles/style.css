@@ -1,0 +1,29 @@
+.marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    background-color: #f8f9fa; /* Couleur de fond */
+    padding: 10px 0; /* Espacement vertical */
+}
+
+.marquee span {
+    display: inline-block;
+    animation: marquee 15s linear infinite; /* Durée de l'animation */
+}
+
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.burkina {
+    color: red; /* Couleur pour 'Burkina' */
+}
+
+.star {
+    color: yellow; /* Couleur pour l'étoile */
+}
+
+.market {
+    color: green; /* Couleur pour 'Market' */
+}
