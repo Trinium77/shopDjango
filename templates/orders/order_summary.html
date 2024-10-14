@@ -1,0 +1,138 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y bg">
+<div class="container">
+
+<div class="row">
+    <aside class="col-lg-8">
+        <div class="card">
+            <h5 class="card-header">Adresse de Livraison</h5>
+            <div class="card-body">
+                <p class="card-text mb-0">{{ order.user.get_full_name }}</p>
+                <p class="card-text mb-0">{{ order.cart.full_address }}</p>
+                <p class="card-text mb-0">{{ order.cart.city }}, {{ order.cart.state }}</p>
+                <p class="card-text mb-0">{{ order.cart.country }}</p>
+                <p class="card-text mb-0">{{ order.cart.email }}</p>
+                <p class="card-text mb-0">{{ order.cart.phone }}</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h5 class="card-header">Revoir les produits</h5>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <thead>
+                        <tr>
+                            <th scope="col">Produits</th>
+                            <th scope="col" width="120">Quantité</th>
+                            <th scope="col" width="120">Prix</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.orderitem_set.all %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'detail' item.product.id %}">{{ item.product.title }}</a>
+                            </td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.product.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </aside>
+
+    <aside class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <dl class="dlist-align">
+                    <dt>Total price:</dt>
+                    <dd class="text-right">$ {{ order.cart.total_price }}</dd>
+                </dl>
+                <dl class="dlist-align">
+                    <dt>Tax:</dt>
+                    <dd class="text-right">$ {{ order.cart.tax }}</dd>
+                </dl>
+                <dl class="dlist-align">
+                    <dt>Grand Total:</dt>
+                    <dd class="text-right text-dark b"><strong>$ {{ order.cart.grand_total }}</strong></dd>
+                </dl>
+                <hr>
+                <div id="paypal-button-container"></div>
+            </div>
+        </div>
+    </aside>
+</div>
+</div>
+</section>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var amount = "{{ order.cart.grand_total }}"; // prix total
+    var url = "{% url 'payments' %}"; // url pour paiement
+    var csrftoken = getCookie('csrftoken'); // Pour recuperer les cookies
+    var orderID = "{{ order.id }}"; // numero de la commande
+    var payment_method = 'PayPal'; // methode de paiement
+    var redirect_url = "{% url 'order_complete' %}";
+
+    paypal.Buttons({
+        style: {
+            shape: 'rect',
+            color: 'gold',
+            layout: 'vertical',
+            label: 'paypal',
+        },
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    "amount": {
+                        "currency_code": "USD",
+                        "value": amount,
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                sendData();
+                function sendData() {
+                    fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/json",
+                            "x-CSRFToken": csrftoken,
+                        },
+                        body: JSON.stringify({
+                            orderID: orderID,
+                            transID: details.id,
+                            payment_method: payment_method,
+                            status: details.status,
+                        }),
+                    }).then(response => response.json()).then(data => {
+                        window.location.href = redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
+                    });
+                }
+            });
+        }
+    }).render('#paypal-button-container');
+</script>
+
+{% endblock %}

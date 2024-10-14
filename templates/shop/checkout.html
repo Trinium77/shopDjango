@@ -1,0 +1,97 @@
+ 
+    {% extends "shop/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="btn btn-secondary"><h2>Passer à la caisse</h2></div>
+
+    <!-- Formulaire de paiement -->
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Détails du panier -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <h5 class="card-header">Détails du panier</h5>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Quantité</th>
+                                    <th>Prix</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart.items.all %}
+                                <tr>
+                                    <td>{{ item.product.title }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.product.price }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Détails de livraison -->
+                <div class="card mb-4">
+                    <h5 class="card-header">Adresse de livraison</h5>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="address">Adresse</label>
+                            <input type="text" name="address" class="form-control" id="address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">Ville</label>
+                            <input type="text" name="city" class="form-control" id="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">État</label>
+                            <input type="text" name="state" class="form-control" id="state" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Pays</label>
+                            <input type="text" name="country" class="form-control" id="country" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Téléphone</label>
+                            <input type="text" name="phone" class="form-control" id="phone" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Détails de la commande -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Résumé de la commande</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Sous-total</span>
+                                <strong>${{ cart.total_price }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Taxes</span>
+                                <strong>${{ cart.tax }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Total</span>
+                                <strong>${{ cart.grand_total }}</strong>
+                            </li>
+                        </ul>
+
+                        <!-- Bouton de confirmation de la commande -->
+                        <button type="submit" class="btn btn-success btn-block">Passer la commande</button>
+
+                        <a class="btn btn-primary btn-block" href="{% url 'home' %}" class="btn btn-light btn-block">Continue Shopping</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+  <h2>Produits dans la catégorie : {{ category.name }}</h2>
+
+  <ul>
+    {% for produit in products %}
+      <li>
+        <h3>{{ produit.title }}</h3>
+        <p>Prix : {{ produit.price }} FCFA</p>
+        
+        <img src="{{ produit.image.url }}" width="500px" height="500px" alt="{{ produit.title }}" />
+      </li>
+    {% empty %}
+      <li>Aucun produit trouvé dans cette catégorie.</li>
+    {% endfor %}
+  </ul>
+
+  <div class="pagination">
+    {% if products.has_previous %}
+        <a href="?page={{ products.previous_page_number }}">Précédent</a>
+    {% endif %}
+
+    <span>Page {{ products.number }} sur {{ products.paginator.num_pages }}</span>
+
+    {% if products.has_next %}
+        <a href="?page={{ products.next_page_number }}">Suivant</a>
+    {% endif %}
+  </div>
+
+{% endblock %}

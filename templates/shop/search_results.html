@@ -1,0 +1,41 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>Résultats de recherche pour "{{ item_name }}"</h2>
+        {% if produits %}
+            <div class="row">
+                {% for produit in produits %}
+                <div class="col-md-3">
+                    <div class="card">
+                        <a href="{% url 'detail' produit.id %}">
+                            <img src="{{ produit.image.url }}" alt="{{ produit.title }}" class="card-img-top" onerror="this.onerror=null; this.src='{% static 'image/default.jpg' %}';">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ produit.title }}</h5>
+                            <p class="card-text" style="color:orange">{{ produit.price }} FCFA</p>
+                            <form action="{% url 'cart:add_to_cart' produit.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-success">Ajouter au panier</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Aucun produit trouvé pour votre recherche.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-3 offset-md-4">
+        <a href="{% url 'home' %}" class="btn btn-primary">Retour à l'accueil</a>
+    </div>
+</div>
+
+{% endblock %}

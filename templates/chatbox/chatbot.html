@@ -1,0 +1,116 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+<div class="btn btn-success">
+    <h1>
+        Bienvenu dans le cente d'aide poser vos question 
+    </h1>
+<div class="chat-container">
+    <h2>Chatbot d'aide</h2>
+    <div id="chatbox">
+        <div id="chat-output"></div>
+        <form id="chat-form">
+            <input type="text" id="user-question" placeholder="Posez votre question ici..." required>
+            <button type="submit" class="btn btn-primary">
+                <img src="https://img.icons8.com/ios-filled/24/ffffff/sent.png" alt="Envoyer" />
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .chat-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    }
+
+    #chat-output {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+
+    #chat-form {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #user-question {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .btn img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    p {
+        margin: 5px 0;
+    }
+
+    .user-message {
+        text-align: right;
+        color: #007bff;
+    }
+
+    .bot-message {
+        text-align: left;
+        color: #333;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#chat-form').on('submit', function(event) {
+            event.preventDefault();
+            
+            const question = $('#user-question').val();
+            $('#user-question').val('');
+
+            $('#chat-output').append('<p class="user-message"><strong>Vous :</strong> ' + question + '</p>');
+
+            $.ajax({
+                url: "{% url 'chatbot' %}",
+                method: 'POST',
+                data: {
+                    question: question,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    $('#chat-output').append('<p class="bot-message"><strong>Chatbot :</strong> ' + response.response + '</p>');
+                    // Faire défiler vers le bas
+                    $('#chat-output').scrollTop($('#chat-output')[0].scrollHeight);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+<div class="row">
+        <div class="col-md-6">
+            <div>
+                <img src="{{ product.image.url }}" width="500px" height="500px" alt="{{ product.title }}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="text-warning display-3">
+                {{ product.title }}
+            </div>
+            <div class="text-danger ">
+               Prix:{{ product.price }} FCFA
+            </div>
+            <div>
+                {{ product.description }}
+            </div>
+             <form action="{% url 'cart:add_to_cart' product.id %}" method="POST">
+                    {% csrf_token %}
+                    {% if product in cart_items %}
+                        <button class="btn btn-secondary" disabled>Ajouté au panier</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-success">Ajouter au panier</button>
+                    {% endif %}
+            </form>
+        </div>
+    </div>
+<h3>Commentaires:</h3>
+<ul>
+    {% for comment in comments %}
+    <li><strong>{{ comment.user.username }}:</strong> {{ comment.content }} <em>({{ comment.created_at }})</em></li>
+    {% endfor %}
+</ul>
+
+{% if user.is_authenticated %}
+<form method="POST">
+    {% csrf_token %}
+    <textarea name="content" class="comment-textarea" rows="4" placeholder="Écrivez votre commentaire ici..."></textarea>
+    <button type="submit" class="btn btn-primary">Commenter</button>
+</form>
+{% else %}
+<p>Vous devez être connecté pour commenter.</p>
+{% endif %}
+
+<a href="{% url 'checkout' %}"><button type="submit" class="btn btn-primary">Passer à la caisse</button></a>
+
+<style>
+.comment-textarea {
+    width: 100%; /* Remplit la largeur disponible */
+    max-width: 600px; /* Limite la largeur à 600px */
+    height: auto; /* Ajuste la hauteur si nécessaire */
+    padding: 10px; /* Ajoute un peu de padding pour le confort */
+    box-sizing: border-box; /* Inclut le padding dans la largeur totale */
+}
+</style>
+
+{% endblock %}

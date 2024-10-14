@@ -1,0 +1,30 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+<section class="section-content padding-y" style="min-height: 84vh;">
+    <div class="card mx-auto" style="max-width: 380px; margin-top: 100px;">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Inscription</h4>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">S'inscrire</button>
+                </div>
+            </form>
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+

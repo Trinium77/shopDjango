@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shop</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Couleur de fond générale */
+            margin: 0; /* Éliminer les marges par défaut */
+            height: 100vh; /* Prendre toute la hauteur de l'écran */
+            display: flex;
+            flex-direction: column; /* Alignement vertical */
+        }
+        .navbar {
+            background-color: #e9ecef; /* Couleur de fond de la navbar */
+        }
+        .nav-link {
+            color: blue; /* Couleur du texte des liens */
+            margin-right: 50px;
+            font-size: 1rem; /* Taille de police uniforme */
+        }
+        .nav-link:hover {
+            color: #007bff;
+            background-color: darkblue; /* Couleur de survol */
+        }
+        #panier {
+            background: none;
+            border: none;
+            padding: 0;
+            color: red; /* Couleur du texte du panier */
+            cursor: pointer;
+        }
+        #panier:hover {
+            color: #007bff;
+        }
+        footer {
+            background-color: green;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        footer a {
+            color: white;
+            margin: 0 15px;
+        }
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+        }
+        .footer-left, .footer-center, .footer-right {
+            flex: 1;
+        }
+        .footer-center {
+            text-align: center;
+        }
+        .content {
+            flex: 1; /* Prendre tout l'espace disponible */
+            padding: 20px; /* Ajout de padding pour le contenu */
+        }
+        .brand-name {
+            font-size: 1.5rem; /* Taille de police */
+            display: flex; /* Utiliser flexbox pour aligner le texte */
+            align-items: center; /* Centrer verticalement */
+        }
+        .burkina {
+            color: red; /* Couleur de "Burkina" */
+        }
+        .market {
+            color: green; /* Couleur de "Market" */
+        }
+        .star {
+            color: yellow; /* Couleur de l'étoile */
+            margin: 0 5px; /* Espacement autour de l'étoile */
+        }
+        .logo-background {
+            background-color:/* Couleur d'arrière-plan du logo */
+            padding: 10px; /* Ajout de padding autour du logo */
+            border-radius: 0px; /* Arrondir les coins si souhaité */
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid content">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                <div class="logo-background">
+                    <img src="{% static 'image/logo.png' %}" alt="EZ-shop" width="100" height="auto" class="mr-2"> 
+                </div>
+                <span class="brand-name">
+                    <span class="burkina">Burkina</span>
+                    <span class="star">★</span>
+                    <span class="market">Market</span>
+                </span>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}"><h5>Accueil</h5></a> 
+                    </li>
+
+                    <li class="nav-item">
+                        
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'products_by_category' %}"><h5>Produits</h5></a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a id="panier" class="nav-link" href="{% url 'cart:cart_detail' %}">
+                            <img src="{% static 'image/panier.jpg' %}" alt="" style="width: 60px; height: 50px;">
+                            ({{ cart.total_items }} articles - {{ cart.total_price }} FCFA)
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <h5>Catégories</h5>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {% for category in categories %}
+                                <a class="dropdown-item" href="{% url 'category_detail' category.id %}">{{ category.name }}</a>
+                            {% empty %}
+                                <a class="dropdown-item" href="#">Aucune catégorie disponible</a>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}"><h5>Déconnexion</h5></a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}"><h5>Connexion</h5></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}"><h5>Inscription</h5></a>
+                        </li>
+                    {% endif %}
+                     <li class="nav-item">
+                        <a id="chatbot-link" class="nav-link" href="{% url 'chatbot' %}">
+                           <img src="{% static 'image/images.png' %}" alt="Chatbot" style="width: 40px; height: 40px;"><h5>CHATBOT</h5>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-left">
+                <h5>Liens importants</h5>
+                <a href="{% url 'about' %}">À propos</a>
+                <a href="{% url 'contact' %}">Contactez-nous</a>
+            </div>
+            <div class="footer-center">
+                <h5>Suivez-nous</h5>
+                <a href="#" style="margin: 0 10px;">
+                    <img src="{% static 'image/facebook-icon.png' %}" alt="Facebook" style="width: 30px; height: 30px;">
+                </a>
+                <a href="#" style="margin: 0 10px;">
+                    <img src="{% static 'image/twitter-icon.png' %}" alt="Twitter" style="width: 30px; height: 30px;">
+                </a>
+                <a href="#" style="margin: 0 10px;">
+                    <img src="{% static 'image/instagram-icon.png' %}" alt="Instagram" style="width: 30px; height: 30px;">
+                </a>
+                <p>© 2024 BurkinaMarket. Tous droits réservés.</p>
+            </div>
+            <div class="footer-right">
+                <p>Contactez-nous : bahoumezekiel70@gmail.com | 54876309</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    {% block js %}{% endblock %}
+</body>
+</html>

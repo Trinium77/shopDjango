@@ -1,0 +1,16 @@
+<!-- templates/accounts/logout.html -->
+{% extends 'shop/base.html' %}
+{% block content %}
+<section class="section-content padding-y">
+    <h1>Déconnexion</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Se déconnecter</button>
+    </form>
+</section>
+{% endblock %}

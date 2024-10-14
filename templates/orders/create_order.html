@@ -1,0 +1,10 @@
+<!-- create_order.html -->
+{% extends "shop/base.html" %}
+
+{% block content %}
+<h2>Créer une commande</h2>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Confirmer la commande</button>
+</form>
+{% endblock %}

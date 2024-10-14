@@ -1,0 +1,75 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block content %}
+
+ <div class="row">
+        <div class="col-md-12">
+            <form class="card card-sm">
+                <div class="card-body row no-gutters align-items-center">
+                    <div class="col">
+                        <input type="search" placeholder="Entrez le nom du produit que vous cherchez" name="item-name" class="form-control form-control-borderless">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-success">Recherche</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<div class="row mt-8">
+    {% for product in product_object %}
+    <div class="col-md-3 mb-4">  
+        <div class="card">
+            <a href="{% url 'detail' product.id %}">
+                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="card-img-top" onerror="this.onerror=null; this.src='{% static 'image/default.jpg' %}';">
+            </a>
+            <div class="card-body">
+                <h5 class="card-title">{{ product.title }}</h5>
+                <p class="card-text" style="color:orange">{{ product.price }} FCFA</p>
+                <form action="{% url 'cart:add_to_cart' product.id %}" method="POST">
+                    {% csrf_token %}
+                    {% if product in cart_items %}
+                        <button class="btn btn-secondary" disabled>Ajouté au panier</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-success">Ajouter au panier</button>
+                    {% endif %}
+                   
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-12">
+        <ul class="pagination justify-content-center">
+            {% if product_object.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ product_object.previous_page_number }}&item-name={{ request.GET.item_name }}">Précédent</a>
+                </li>
+            {% endif %}    
+
+            {% for num in product_object.paginator.page_range %}
+                {% if product_object.number == num %}
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ num }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}&item-name={{ request.GET.item_name }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if product_object.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ product_object.next_page_number }}&item-name={{ request.GET.item_name }}">Suivant</a>
+                </li>
+            {% endif %} 
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

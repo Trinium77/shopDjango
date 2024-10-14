@@ -1,0 +1,16 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+  <h2>Liste des catégories</h2>
+
+  <ul>
+    {% for category in categories %}
+      <li>
+        <a href="{% url 'category_detail' category.id %}">{{ category.name }}</a>
+      </li>
+    {% empty %}
+      <li>Aucune catégorie disponible.</li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}

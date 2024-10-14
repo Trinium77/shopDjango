@@ -1,0 +1,67 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block content %}
+    <style>
+        .marquee {
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            background-color: #f8f9fa; /* Couleur de fond */
+            padding: 10px 0; /* Espacement vertical */
+        }
+
+        .marquee span {
+            display: inline-block;
+            animation: marquee 15s linear infinite; /* Durée de l'animation */
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .burkina {
+            color: red; /* Couleur pour 'Burkina' */
+        }
+
+        .star {
+            color: yellow; /* Couleur pour l'étoile */
+        }
+
+        .market {
+            color: green; /* Couleur pour 'Market' */
+        }
+    </style>
+
+    <div class="marquee">
+        <span>
+           <h1>BIENVENU SUR <span class="burkina">Burkina</span><span class="star">⭐</span><span class="market">Market</span>, Tous nos produits disponibles par catégories</h1>
+        </span>
+    </div>
+    
+    {% for category, products in products_by_category.items %}
+        <h3>{{ category.name }}</h3>
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        <a href="{% url 'detail' product.id %}">
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="card-img-top" onerror="this.onerror=null; this.src='{% static 'image/default.jpg' %}';">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.title }}</h5>
+                            <p class="card-text" style="color:orange">{{ product.price }} FCFA</p>
+                            <form action="{% url 'cart:add_to_cart' product.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success">Ajouter au panier</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Aucun produit disponible dans cette catégorie.</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}
